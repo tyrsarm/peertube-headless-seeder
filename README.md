@@ -1,5 +1,9 @@
 # Peertube-Headless-Seeder
 This container uses Python, Selenium, and Firefox to monitor and seed live streams of a PeerTube channel headlessly. 
+## THIS IS A WORK IN PROGRESS
+### TO-DO:
+1. Set proper pause timing for calling the API. 
+2. Do final tests.
 
 ## API Variable
 The api_url environment variable is used to input the user's API URL. 
