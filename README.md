@@ -21,16 +21,7 @@ docker run --env api_url="https://example.tube/api/v1/accounts/channelname/video
 ```
 
 Docker Compose:
-``` yaml
-version: "3.3"
-
-services:
-  peertube-seeder:
-    image: tyrsarm/peertube-headless-seeder:latest
-    environment:
-      api_url: "https://example.tube/api/v1/accounts/channelname/videos"
-    restart: unless-stopped 
-```
+There's an example docker-compose.yml in this repository for easy installation and use.
 
 Source Code:
 https://github.com/tyrsarm/peertube-headless-seeder
