@@ -26,7 +26,7 @@ version: "3.3"
 
 services:
   peertube-seeder:
-    image: tyrsarm/peertube-headless-seeder:latest
+    image: tyrsarm/peertube-headless-seeder:v0.1
     environment:
       api_url: "https://example.tube/api/v1/accounts/channelname/videos"
     restart: unless-stopped 
