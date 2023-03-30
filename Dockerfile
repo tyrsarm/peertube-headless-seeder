@@ -1,36 +1,23 @@
-# Use an official Python runtime as the base image
-FROM python:3
+FROM python:slim
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the requirements file
-COPY pip_requirements.txt .
+# Copy necessary files
+COPY *.txt *.py ./
 
-# Install the dependencies
+# Install python dependencies
 RUN pip install --no-cache-dir -r pip_requirements.txt
 
-# Copy the scripts and make them executable
-COPY main.py .
-RUN chmod +x main.py
-COPY apipoll.py .
-RUN chmod +x apipoll.py
-COPY get_url.py .
-RUN chmod +x get_url.py
-COPY playlive.py .
-RUN chmod +x playlive.py
-
-# Copy txt files (used for variables between the scripts)
-COPY isPlaying.txt .
-COPY isLive.txt .
-COPY new_id.txt .
-COPY url_file.txt .
-
 # Install Firefox
-RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends firefox
-#RUN apt-get update && apt-get install -y firefox
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends firefox && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add a non-root user to run our program
+RUN groupadd -r myuser && useradd --no-log-init -r -g myuser myuser && chown -R myuser:myuser /app
+USER myuser
 
 # Set the environment variable
 ENV api_url="https://jupiter.tube/api/v1/accounts/jblive/videos"
