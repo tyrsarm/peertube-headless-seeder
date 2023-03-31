@@ -24,7 +24,7 @@ if ((isLive == True) and (started == False)):
     with open("isPlaying.txt",'w') as playingfile:
         pass
     playingfile.close()
-    playingfile = open("isPlaying.txt.txt", "w+")
+    playingfile = open("isPlaying.txt", "w+")
     playingfile.write("True")
     playingfile.close()
     while isLive == True:
@@ -35,7 +35,7 @@ if ((isLive == True) and (started == False)):
     with open("isPlaying.txt",'w') as playingfile:
         pass
     playingfile.close()
-    playingfile = open("isPlaying.txt.txt", "w+")
+    playingfile = open("isPlaying.txt", "w+")
     playingfile.write("False")
     playingfile.close()    
     driver.close()
