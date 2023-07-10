@@ -56,4 +56,4 @@ def main(url: str, timeout_sec: int) -> None:
 if __name__ == '__main__':
     api_url: str = os.getenv("peertube_url", default="https://jupiter.tube/")
     timeout: int = int(os.getenv("retry_sec", default="300"))
-    main(api_url, timeout_sec=timeout)
+    main(api_url, timeout)
