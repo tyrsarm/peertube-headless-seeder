@@ -1,9 +1,12 @@
 import os
 import time
+
 import requests
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
+from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.service import Service as FirefoxService
 
 
 def get_live_video_urls(instance_url: str) -> list[str]:
@@ -24,9 +27,10 @@ def run_browser_instance(url: str = None) -> WebDriver:
     :return: The Browser object
     """
     browser_options: Options = Options()
-    browser_options.add_argument("--headless")
+    browser_options.add_argument("-headless")
     browser_options.set_preference("media.autoplay.default", False)
-    browser: WebDriver = webdriver.Firefox(options=browser_options)
+    browser: WebDriver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()),
+                                           options=browser_options)
     if url is not None:
         browser.get(url)
     return browser
