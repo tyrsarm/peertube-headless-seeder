@@ -1,27 +1,66 @@
-# Peertube-Headless-Seeder
-This container uses Python, Selenium, and Firefox to monitor and seed live streams of a PeerTube channel headlessly. 
-## THIS IS A WORK IN PROGRESS
+# PeerTube-Headless-Seeder
+
+This container uses Python, Selenium, and Firefox to monitor and seed live streams of a PeerTube instance headlessly.
+
+## :rotating_light: :rotating_light: THIS IS A WORK IN PROGRESS :rotating_light: :rotating_light:
+
 ### TO-DO:
-1. Set proper pause timing for calling the API.
-2. Make the scripts so they call the API once instead of three times
-3. Replace the text file variables with envroment variables.
-4. Do final tests.
 
-## API Variable
-The api_url environment variable is used to input the user's API URL. 
-Example API URL:  https://example.tube/api/v1/accounts/channelname/videos
+1. Set proper pause timing for calling the API
+2. Reduce the size of the docker image
+3. Setup testing
+4. Add metrics and logging
 
-If the API URL is not set, the default is to follow and seed [Jupiter Broadcasting live streams on their instance](https://jupiter.tube/c/live/videos).
+## Usage
 
-## How To Run
-You can run the container two ways manually or thru Docker Compose.
-Manually:
+### Docker Compose
+
+```yaml
+version: "3.3"
+
+services:
+  PeerTube-seeder:
+    image: tyrsarm/peertube-headless-seeder:latest
+    environment:
+      PeerTube_url: "https://jupiter.tube/"
+      ping_interval: 300
+    restart: unless-stopped
 ```
-docker run --env api_url="https://example.tube/api/v1/accounts/channelname/videos" tyrsarm/peertube-headless-seeder
+
+### Docker CLI
+
+```
+docker run -d \
+  --name PeerTube-headless-seeder
+  -e peertube_url="https://jupiter.tube/" \
+  -e ping_interval=300 \
+  --restart=unless-stopped \
+  tyrsarm/PeerTube-headless-seeder:latest
 ```
 
-Docker Compose:
-There's an example docker-compose.yml in this repository for easy installation and use.
+### Parameters
 
-Source Code:
-https://github.com/tyrsarm/peertube-headless-seeder
+| Parameter     | Function                                               | Default                |
+|---------------|--------------------------------------------------------|------------------------|
+| peertube_url  | URL of the PeerTube instance that you want to seed     | `https://jupiter.tube` |
+| ping_interval | The time between checking for live videos (in seconds) | `300`                  |
+
+### Updating
+
+#### Via Docker Compose
+
+1. Update all images: `docker-compose pull`
+2. Let compose update container as necessary: `docker-compose up -d`
+3. You can also remove the old dangling images: `docker image prune`
+
+#### Via Docker CLI
+
+1. Update the image: `docker pull tyrsarm/PeerTube-headless-seeder:latest`
+2. Stop the running container: `docker stop PeerTube-headless-seeder`
+3. Delete the container: `docker rm PeerTube-headless-seeder`
+4. Recreate a new container with the same docker run parameters as instructed above
+5. You can also remove the old dangling images: `docker image prune`
+
+## Source Code:
+
+https://github.com/tyrsarm/PeerTube-headless-seeder

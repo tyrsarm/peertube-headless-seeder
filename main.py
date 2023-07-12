@@ -36,7 +36,7 @@ def run_browser_instance(url: str = None) -> WebDriver:
     return browser
 
 
-def main(url: str, timeout_sec: int) -> None:
+def main(url: str, api_call_interval_sec: int) -> None:
     browser_instances: list[tuple[str, WebDriver]] = []
     while True:
         print("Checking for live videos")
@@ -54,10 +54,10 @@ def main(url: str, timeout_sec: int) -> None:
                 browser_instances.append((video, browser))
 
         # This will probably be made better by scheduling the function calls
-        time.sleep(timeout_sec)
+        time.sleep(api_call_interval_sec)
 
 
 if __name__ == '__main__':
     api_url: str = os.getenv("peertube_url", default="https://jupiter.tube/")
-    timeout: int = int(os.getenv("retry_sec", default="300"))
-    main(api_url, timeout)
+    api_call_interval: int = int(os.getenv("ping_interval", default="300"))
+    main(api_url, api_call_interval)

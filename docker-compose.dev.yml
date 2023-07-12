@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  peertube-seeder:
+  peertube-seeder-dev:
     container_name: peertube-headless-seeder-dev
     image: peertube-headless-seeder-dev
     build:

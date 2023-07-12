@@ -15,17 +15,17 @@ COPY . .
 RUN apt update && \
     apt install -y --no-install-recommends firefox-esr
 
-# Need to add a non-root user to run our program. Current build fails due to permission error for /home/user for some reason
-#RUN groupadd -r user && \
-#    useradd --no-log-init -r -g user user && \
-#    chown -R user:user /app
-#USER user
-
 # Install python dependencies
 RUN pip install -r requirements.txt --no-cache-dir
 
+# Add a non-root user to run our program
+RUN groupadd -r user && \
+    useradd --no-log-init -r -g user user && \
+    chown -R user:user /app
+USER user
+
 ENV peertube_url="https://jupiter.tube/"
-ENV retry_sec=300
+ENV ping_interval=300
 
 # Run the script
 CMD [ "python", "./main.py" ]
