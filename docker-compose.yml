@@ -4,5 +4,6 @@ services:
   peertube-seeder:
     image: tyrsarm/peertube-headless-seeder:latest
     environment:
-      api_url: "https://example.tube/api/v1/accounts/channelname/videos"
+      peertube_url: "https://jupiter.tube/"
+      retry_sec: 300
     restart: unless-stopped

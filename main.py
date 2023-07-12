@@ -1,45 +1,63 @@
-import schedule
-import time
-import threading
-import requests
-import json
 import os
-from apipoll import Checker
-from get_url import GetURL
-# Requires: pip install schedule selenium
+import time
 
-def start_checker(urls, wait_time):
-    checker = Checker(urls, wait_time)
+import requests
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.webdriver import WebDriver
+from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.service import Service as FirefoxService
 
-def start_get_url(urls, wait_time):
-    get_url = GetURL(urls, wait_time)(urls, wait_time)
 
-urls = os.environ['api_url']
-wait_time_api = 15
-wait_time_url = 30
-threadapi = threading.Thread(target=start_checker, args=(urls, wait_time_api))
-threadurl = threading.Thread(target=start_get_url, args=(urls, wait_time_url))
-threadapi.start()
-threadurl.start()
+def get_live_video_urls(instance_url: str) -> list[str]:
+    """
+    Get a list of URLs for the videos that are currently live.
+    :param instance_url: base url of the PeerTube instance that will be called
+    :return: list of URLs as strings
+    """
+    search_url: str = f"{instance_url}api/v1/search/videos?isLive=true&sort=-publishedAt"
+    videos_json: dict = requests.get(search_url).json()
+    return [v["url"] for v in videos_json["data"]]
 
-def runplaylive():
-    livefile = open("isLive.txt",'r')
-    isLive = livefile.read()
-    livefile.close()
-    startfile = open("isPlaying.txt",'r')
-    started = startfile.read()
-    startfile.close()
-    current_time = time.strftime("%H:%M:%S", time.localtime())
-    if ((isLive == True) and (started == False)):
-        print(current_time, "Starting New Live")
-        exec(open("playlive.py").read())
 
-    else:
-        print(current_time, "Checking Again")
-        time.sleep(10)
+def run_browser_instance(url: str = None) -> WebDriver:
+    """
+    Create a headless Firefox instance and navigate to the URL provide. Then returns the Firefox instance
+    :param url: URL to send browser to
+    :return: The Browser object
+    """
+    browser_options: Options = Options()
+    browser_options.add_argument("-headless")
+    browser_options.set_preference("media.autoplay.default", False)
+    browser: WebDriver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()),
+                                           options=browser_options)
+    if url is not None:
+        browser.get(url)
+    return browser
 
-schedule.every(1).minutes.do(runplaylive)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+def main(url: str, api_call_interval_sec: int) -> None:
+    browser_instances: list[tuple[str, WebDriver]] = []
+    while True:
+        print("Checking for live videos")
+        live_videos: list[str] = get_live_video_urls(url)
+
+        print(f"Current live videos: {len(live_videos)}")
+        for (url, browser) in browser_instances:
+            if url not in live_videos:
+                print(f"{url} is no longer live. Closing browser session")
+                browser.close()
+
+        for video in live_videos:
+            if video not in (i[0] for i in browser_instances):
+                browser: WebDriver = run_browser_instance(video)
+                browser_instances.append((video, browser))
+
+        # This will probably be made better by scheduling the function calls
+        time.sleep(api_call_interval_sec)
+
+
+if __name__ == '__main__':
+    api_url: str = os.getenv("peertube_url", default="https://jupiter.tube/")
+    api_call_interval: int = int(os.getenv("ping_interval", default="300"))
+    main(api_url, api_call_interval)
