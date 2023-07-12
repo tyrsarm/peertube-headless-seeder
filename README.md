@@ -19,10 +19,10 @@ This container uses Python, Selenium, and Firefox to monitor and seed live strea
 version: "3.3"
 
 services:
-  PeerTube-seeder:
+  peertube-seeder:
     image: tyrsarm/peertube-headless-seeder:latest
     environment:
-      PeerTube_url: "https://jupiter.tube/"
+      peertube_url: "https://jupiter.tube/"
       ping_interval: 300
     restart: unless-stopped
 ```
@@ -31,11 +31,11 @@ services:
 
 ```
 docker run -d \
-  --name PeerTube-headless-seeder
+  --name peertube-headless-seeder
   -e peertube_url="https://jupiter.tube/" \
   -e ping_interval=300 \
   --restart=unless-stopped \
-  tyrsarm/PeerTube-headless-seeder:latest
+  tyrsarm/peertube-headless-seeder:latest
 ```
 
 ### Parameters
@@ -55,12 +55,12 @@ docker run -d \
 
 #### Via Docker CLI
 
-1. Update the image: `docker pull tyrsarm/PeerTube-headless-seeder:latest`
-2. Stop the running container: `docker stop PeerTube-headless-seeder`
-3. Delete the container: `docker rm PeerTube-headless-seeder`
+1. Update the image: `docker pull tyrsarm/peertube-headless-seeder:latest`
+2. Stop the running container: `docker stop peertube-headless-seeder`
+3. Delete the container: `docker rm peertube-headless-seeder`
 4. Recreate a new container with the same docker run parameters as instructed above
 5. You can also remove the old dangling images: `docker image prune`
 
 ## Source Code:
 
-https://github.com/tyrsarm/PeerTube-headless-seeder
+https://github.com/tyrsarm/peertube-headless-seeder
